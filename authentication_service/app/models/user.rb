@@ -2,6 +2,7 @@ class User < ApplicationRecord
   has_secure_password
 
   validates :email, presence: true, uniqueness: true, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, }
+  validates :password, length: {minimum: 8, maximum: 15}
 
   def self.encode_token(payload)
     JWT.encode(payload, Rails.application.credentials.secret_key_base )
