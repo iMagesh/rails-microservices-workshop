@@ -3,7 +3,7 @@ require 'rails_helper'
 # Define shared examples at the beginning of the file
 RSpec.shared_examples 'a registration error' do |error_message, extra_params|
   let(:user_count) { 1 }
-  it "returns error when #{error_message}" do
+  it "when #{error_message}" do
     post '/register', params: { email: 'existing@example.com', password: 'password', password_confirmation: 'password' }.merge(extra_params)
     expect(User.count).to be(user_count)
     expect(response).to have_http_status(:unprocessable_entity)
