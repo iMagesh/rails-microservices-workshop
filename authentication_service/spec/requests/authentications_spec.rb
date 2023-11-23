@@ -13,12 +13,8 @@ end
 
 RSpec.describe 'Authentications', type: :request do
 
-  before(:all) do
-    User.create(
-      email: "alreadytaken@example.com",
-      password: "password",
-      password_confirmation: "password"
-    )
+  before do
+    create(:user, email: "alreadytaken@example.com")
   end
 
   describe 'POST /register' do
@@ -26,9 +22,9 @@ RSpec.describe 'Authentications', type: :request do
       { email: 'test@example.com', password: 'password', password_confirmation: 'password' }
     end
 
-    let(:invalid_attributes) do
-      valid_attributes.merge(password_confirmation: 'wrong')
-    end
+    # let(:invalid_attributes) do
+    #   valid_attributes.merge(password_confirmation: 'wrong')
+    # end
 
     context 'with valid parameters' do
       before { post '/register', params: valid_attributes }
@@ -59,4 +55,37 @@ RSpec.describe 'Authentications', type: :request do
       it_behaves_like 'a registration error', "Password is too long (maximum is 15 characters)", password: 'itstoolongpassword', password_confirmation: 'itstoolongpassword'
     end
   end
+
+  describe "POST /login" do
+    let(:user) { create(:user, email: 'user@example.com', password: 'password') }
+
+    context "with valid credentials" do
+      before do
+        post '/login', params: { email: user.email, password: user.password }
+      end
+
+      it "logs in the user and returns a success status" do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "returns a JWT token" do
+        expect(json_response['token']).not_to be_nil
+      end
+
+      it 'expect a valid token' do
+        decoded_token = User.decode_token(json_response['token'])
+        expect(decoded_token).not_to be_nil
+        expect(decoded_token['user_id']).to eq(user.id)
+      end
+    end
+
+    context "with invalid credentials" do
+      it "returns an error message and unauthorized status" do
+        post '/login', params: { email: user.email, password: 'wrong' }
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']).to include('Invalid email or password')
+      end
+    end
+  end
+
 end
