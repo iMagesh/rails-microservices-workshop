@@ -46,6 +46,7 @@ group :development, :test do
   gem 'rspec-rails' # For testing
   gem 'factory_bot_rails' # For test factories
   gem 'faker' # For generating fake data in seeds and tests
+  gem 'simplecov', require: false
 end
 
 group :development do
