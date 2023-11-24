@@ -1,0 +1,8 @@
+rails new auth_service --api -T --skip-git
+
+ecommerce_microservices
+
+  - authentication_service
+  - product_service
+  - order_service
+  -
