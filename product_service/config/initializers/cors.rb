@@ -14,3 +14,12 @@
 #       methods: [:get, :post, :put, :patch, :delete, :options, :head]
 #   end
 # end
+Rails.application.config.middleware.insert_before 0, Rack::Cors do
+  allow do
+    origins '*'  # Adjust this to your front-end's domain for production
+    resource '*',
+      headers: :any,
+      methods: [:get, :post, :put, :patch, :delete, :options, :head],
+      credentials: false  # Set to true if you're using cookies/session
+  end
+end
