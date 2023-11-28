@@ -1,10 +1,19 @@
 class ProductsController < ApplicationController
-  before_action :set_product, only: :destroy
+  before_action :set_product, only: [:show, :destroy]
   before_action :authenticate_user, only: [:create, :destroy]
 
   def index
     @products = Product.all
-    render json: @product
+    render json: @products
+  end
+
+  def show
+    render json: @product, status: :ok
+  end
+
+  def details
+    @products = Product.where(id: params[:product_ids].split(','))
+    render json: @products, status: :ok
   end
 
   def create
